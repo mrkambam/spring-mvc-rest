@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -151,7 +152,7 @@ public final class GamesControllerTest {
     	Mockito.when(this.gameRepository.retrieve(0L)).thenReturn(game);
 
         this.mockMvc.perform(
-            post(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
+            put(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
                 getBytes("{ \"status\" : \"SELECTED\" }"))) //
         .andExpect(status().isOk());
     }
@@ -162,7 +163,7 @@ public final class GamesControllerTest {
         game.select(1L);
 
         this.mockMvc.perform(
-            post(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
+            put(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
                 getBytes("{ \"status\" : \"OPEN\" }"))) //
         .andExpect(status().isOk());
     }
@@ -172,7 +173,7 @@ public final class GamesControllerTest {
     	Mockito.when(this.gameRepository.retrieve(0L)).thenReturn(game);
 
         this.mockMvc.perform(
-            post(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
+            put(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
                 getBytes("{ \"status\" : \"CLOSED\" }"))) //
         .andExpect(status().isConflict()) //
         .andExpect(content().string("It is illegal to transition door '1' in game '0' to 'CLOSED'"));
@@ -180,7 +181,7 @@ public final class GamesControllerTest {
 
     @Test
     public void modifyDoorMissingKey() throws Exception {
-        this.mockMvc.perform(post(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(getBytes("{}"))) //
+        this.mockMvc.perform(put(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(getBytes("{}"))) //
         .andExpect(status().isBadRequest()) //
         .andExpect(content().string("Payload is missing key 'status'"));
     }
@@ -190,7 +191,7 @@ public final class GamesControllerTest {
     	Mockito.when(this.gameRepository.retrieve(0L)).thenThrow(new GameDoesNotExistException(0L));
 
         this.mockMvc.perform(
-            post(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
+            put(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
                 getBytes("{ \"status\" : \"SELECTED\" }"))) //
         .andExpect(status().isNotFound()) //
         .andExpect(content().string("Game '0' does not exist"));
@@ -201,7 +202,7 @@ public final class GamesControllerTest {
     	Mockito.when(this.gameRepository.retrieve(0L)).thenReturn(game);
 
         this.mockMvc.perform(
-            post("http://localhost/games/0/doors/4").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
+            put("http://localhost/games/0/doors/4").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(
                 getBytes("{ \"status\" : \"SELECTED\" }"))) //
         .andExpect(status().isNotFound()) //
         .andExpect(content().string("Door '4' in game '0' does not exist"));
@@ -210,7 +211,7 @@ public final class GamesControllerTest {
     @Test
     public void modifyDoorIllegalArgumentException() throws Exception {
         this.mockMvc.perform(
-            post(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(getBytes("{ \"status\": \"foo\"}"))) //
+            put(DOOR_LOCATION).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(getBytes("{ \"status\": \"foo\"}"))) //
         .andExpect(status().isBadRequest()) //
         .andExpect(content().string("'foo' is an illegal value for key 'status'"));
     }

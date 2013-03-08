@@ -19,6 +19,7 @@ package com.nebhale.letsmakeadeal.web;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -59,13 +60,13 @@ public final class GamesControllerIntegrationTest {
         .andReturn().getResponse().getHeader("Location");
 
         String doorsLocation = getLinkedLocation(gameLocation, "doors");
-        this.mockMvc.perform(post(getDoorLocation(doorsLocation, 1)) //
+        this.mockMvc.perform(put(getDoorLocation(doorsLocation, 1)) //
         .contentType(MediaType.APPLICATION_JSON) //
         .content(getBytes("{ \"status\": \"SELECTED\"}"))) //
         .andExpect(status().isOk());
 
         if ("CLOSED".equals(getDoorStatus(doorsLocation, 0))) {
-            this.mockMvc.perform(post(getDoorLocation(doorsLocation, 0)) //
+            this.mockMvc.perform(put(getDoorLocation(doorsLocation, 0)) //
             .contentType(MediaType.APPLICATION_JSON) //
             .content(getBytes("{ \"status\": \"OPEN\"}"))) //
             .andExpect(status().isOk());

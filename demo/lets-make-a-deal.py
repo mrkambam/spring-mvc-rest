@@ -3,7 +3,7 @@
 import json
 import requests
 
-GAME_ROOT='http://localhost:8080/games'
+GAME_ROOT='http://localhost:8080/lets-make-a-deal/games'
 
 def get_link_location(source, rel):
 	if isinstance(source, str):
